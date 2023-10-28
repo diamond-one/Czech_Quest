@@ -7,7 +7,6 @@ import atexit
 import glob
 
 import pygame
-import keyboard
 import time
 
 # Failsafe deletion of tempfiles created from play_text function
@@ -62,26 +61,26 @@ def main():
         print("\nWhat is:", czechWord, "in English?")
         temp_file = play_text(czechWord)
 
-        print("\nPress 'a' to hear audio again, press 'g' to guess: ")
-
         while True:
-            event = keyboard.read_event()
-            if event.event_type == keyboard.KEY_DOWN:
-                if event.name == 'a':
-                    temp_file = play_text(czechWord)
-                elif event.name == 'g':
-                    guess = input("\nEnter your guess: ")
-                    print(f"You guessed: {guess}")
-                    break
-                else:
-                    print("\nInvalid choice. Please press 'a' for audio or 'g' to guess")
+            choice = input("\nPress 'a' and 'ENTER' to hear audio again, or just 'ENTER' to continue: ")
+            if choice == 'a':
+                temp_file = play_text(czechWord)
+            elif choice == '':
+                guess = input("Enter your guess: ")
+                print(f"You guessed: {guess}")
+                break
+            else:
+                print("Invalid choice detected. Moving on to guessing phase.")
+                guess = input("Enter your guess: ")
+                print(f"You guessed: {guess}")
+                break
 
         print("____________________________________________________________________________________")
         meaning = common_1000[rnd_seed][1]
         print ("Meaning: ", meaning)
         print("____________________________________________________________________________________")
         print (common_1000[rnd_seed][2])
-        print ("Víc prosím?")
+        print ("Víc prosím? Press ENTER")
         input()
         print("__________________________Pojďme Gooo__________________________")
 
