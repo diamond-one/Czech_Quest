@@ -1,0 +1,34 @@
+import os
+import sys
+import pprint
+
+# Get the directory of the current script
+current_directory = os.path.dirname(os.path.abspath(__file__))
+# Add the root directory of your project to sys.path
+sys.path.append(os.path.join(current_directory, ".."))
+
+from content.common_1000.common_1000_dic import common_1000
+
+dictKey = 1
+
+while True: 
+    current_word = common_1000[dictKey][0]
+    
+    # Create a relative path for the audio file
+    relative_audio_path = os.path.join("content", "common_1000", "audio", f"{dictKey}_{current_word}.mp3")
+    
+    # Append the relative audio path to the dictionary entry
+    common_1000[dictKey].append(relative_audio_path)
+    
+    #DEBUG
+    print(relative_audio_path)
+    
+    if dictKey >= 5:
+        break
+    dictKey += 1
+
+# Write the updated dictionary to a new file
+with open(os.path.join(current_directory, "..", "content", "common_1000", "updated_common_1000_dic.py"), "w", encoding="utf-8") as f:
+    f.write("common_1000 = ")
+    formatted_dict = pprint.pformat(common_1000)
+    f.write(formatted_dict)
