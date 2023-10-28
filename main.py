@@ -36,16 +36,35 @@ def play_text(text):
     atexit.register(os.remove, temp_filename)
     return temp_filename
 
+def print_title_art():
+    title = """
+ ██████╗███████╗███████╗ ██████╗██╗  ██╗     ██████╗ ██╗   ██╗███████╗███████╗████████╗
+██╔════╝╚══███╔╝██╔════╝██╔════╝██║  ██║    ██╔═══██╗██║   ██║██╔════╝██╔════╝╚══██╔══╝
+██║       ███╔╝ █████╗  ██║     ███████║    ██║   ██║██║   ██║█████╗  ███████╗   ██║   
+██║      ███╔╝  ██╔══╝  ██║     ██╔══██║    ██║▄▄ ██║██║   ██║██╔══╝  ╚════██║   ██║   
+╚██████╗███████╗███████╗╚██████╗██║  ██║    ╚██████╔╝╚██████╔╝███████╗███████║   ██║   
+ ╚═════╝╚══════╝╚══════╝ ╚═════╝╚═╝  ╚═╝     ╚══▀▀═╝  ╚═════╝ ╚══════╝╚══════╝   ╚═╝   
+    """
+    print(title)
+
+# Call the function at the start of your game
+print_title_art()
+
+# Game Intro
+print("Czech Quest.. prepare yourself for 1000 word mastery. \n In this game you will be tested on the 1000 most used words in the Czech langauge \n")
+print("This is not an excuse to ditch the grammer lessons, because you'll still need those to make sentences, however Czech Quest is another tool up your sleeve.")
+
 def main(): 
     pygame.mixer.init()
     while True:
         rnd_seed = random.randrange(1,1001)
         czechWord = common_1000[rnd_seed][0]
-        print("What is:", czechWord, "in English?")
+        print("\nWhat is:", czechWord, "in English?")
         temp_file = play_text(czechWord)
 
+        print("\nPress 'a' to hear audio again, press 'g' to guess: ")
+
         while True:
-            print("Press 'a' to hear audio again, press 'g' to guess: ", end='', flush=True)
             event = keyboard.read_event()
             if event.event_type == keyboard.KEY_DOWN:
                 if event.name == 'a':
@@ -55,7 +74,7 @@ def main():
                     print(f"You guessed: {guess}")
                     break
                 else:
-                    print("\nInvalid choice. Please press 'a' or 'g'.")
+                    print("\nInvalid choice. Please press 'a' for audio or 'g' to guess")
 
         print("____________________________________________________________________________________")
         meaning = common_1000[rnd_seed][1]
