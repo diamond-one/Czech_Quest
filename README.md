@@ -14,6 +14,16 @@ A project to help people learn Czech
 # TODO add some sort of scoreboard or points system to the game
 # TODO you need grammer in there somehow. 
 # TODO Add user login
+# TODO Add in game functions. If user enters 
+    :q to quit
+    :su to swtich user
+    :score to check score
+    :update to update word list
+    :helo to see commands
+    :swtch to switch game
+    :lang to switch langauge 
+    :
+
 
 
 # Score ideas
@@ -23,6 +33,12 @@ A project to help people learn Czech
 +50 Daily bonus 
 +100 7-day streak
 Can go into negitives 
+
+# Spaced Repition
+The Lietner system
+- 3 boxes... etc
+
+
 
 
 Title art from https://patorjk.com/software/taag/#p=display&f=Crawford2&t=Type%20Something%20

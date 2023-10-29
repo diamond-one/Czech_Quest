@@ -1,14 +1,17 @@
-import random as random
-from content.common_1000.common_1000_dic import common_1000
+import random
+import pandas as pd
 from utilities.keepScore import update_score, save_scores_to_json, load_scores_from_json
-
 from gtts import gTTS
 import tempfile
 import os
 import atexit
 import glob
-
 import pygame
+
+# Load data from Excel file
+def load_data_from_excel(file_path):
+    df = pd.read_excel(file_path)
+    return df.to_dict(orient='index')
 
 # Failsafe deletion of tempfiles created from play_text function
 def clear_temp_files():
@@ -47,8 +50,6 @@ def print_title_art():
     """
     print(title)
 
-linebreak = "____________________________________________________________________________________"
-
 # Call the function at the start of your game
 print_title_art()
 
@@ -59,12 +60,13 @@ print("This is not an excuse to ditch the grammer lessons, because you'll still 
 def main(): 
     print("Starting main function...")  # Debug print
     scores = load_scores_from_json()
+    common_1000 = load_data_from_excel('content/common_1000/common_1000.xlsx')
     pygame.mixer.init()
     username = input("Enter your username: ")  # Moved outside the loop
     while True:
-        rnd_seed = random.randrange(1,20)
-        czechWord = common_1000[rnd_seed][0]
-        correct_answer = common_1000[rnd_seed][1]
+        rnd_seed = random.randrange(1, len(common_1000))
+        czechWord = common_1000[rnd_seed]['Czech']
+        correct_answer = common_1000[rnd_seed]['English']
 
         print("\nWhat is:", czechWord, "in English?")
         temp_file = play_text(czechWord)
@@ -100,7 +102,7 @@ def main():
                 break
         
         print("\nMeaning: ", correct_answer)
-        print(common_1000[rnd_seed][2])
+        print(common_1000[rnd_seed]['Mnemonic'])
         print("\nVíc prosím? Press ENTER")
         input()
         print("__________________________Pojďme Gooo__________________________")
