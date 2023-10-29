@@ -11,17 +11,18 @@ def update_score(scores, username, is_correct):
 
 
 def save_scores_to_json(scores):
-    # Print the current working directory for debugging
-    print("Current working directory:", os.getcwd())
+    # Print the current working directory for debugging  # DEBUG
+    # print("Current working directory:", os.getcwd()) # DEBUG
 
     # Construct the file path relative to the current working directory
     file_path = os.path.join(os.getcwd(), "data", "scores.json")
-    print("Attempting to save to:", file_path)  # Debug print
+    # print("Attempting to save to:", file_path)   # DEBUG
 
     try:
         with open(file_path, "w") as file:
             json.dump(scores, file)
-            print("Scores saved successfully.")
+            # print("Scores saved successfully.") # DEBUG
+
     except Exception as e:
         print(f"Error saving scores: {e}")
 
