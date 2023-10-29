@@ -2,7 +2,7 @@ import random
 import pandas as pd
 import json
 import os
-from utilities.keepScore import update_score, save_scores_to_json, load_scores_from_json
+from utilities.keepScore import update_score, save_scores_to_json, load_scores_from_json, display_scoreboard
 from gtts import gTTS
 import tempfile
 import atexit
@@ -97,9 +97,13 @@ def main():
     scores = load_scores_from_json()
     common_1000 = load_data_from_excel('content/common_1000/common_1000.xlsx')
     pygame.mixer.init()
-    username = input("Enter your username: ")
-    progress = load_progress_from_json(username)
 
+    username_input = input("Enter your username: ")
+    username = username_input.lower()  # Convert to lowercase for consistency
+
+    # Display the scoreboard for the user
+    display_scoreboard(scores)
+    progress = load_progress_from_json(username)
 
     while True:
         word_id = select_word(common_1000, progress)
@@ -111,8 +115,13 @@ def main():
 
         guess = input("Enter your guess: ").strip().lower()
         is_correct = guess == correct_answer.lower()
-        update_score(scores, username, is_correct)
-        # print("Calling save_scores_to_json...")  # Debug
+
+        # Get the previous streak before updating the score
+        previous_streak = scores.get(username, {}).get("streak", 0)
+
+        # Update the score with the current answer and previous streak
+        update_score(scores, username, is_correct, previous_streak)
+
         save_scores_to_json(scores)
 
         if is_correct:
@@ -126,10 +135,7 @@ def main():
 
         print("\nMeaning: ", correct_answer)
         print(common_1000[word_id]['Mnemonic'])
-        print("\nVíc prosím? Press ENTER")
-        input()
         print("__________________________Pojďme Gooo__________________________")
-
 
 clear_temp_files()
 
