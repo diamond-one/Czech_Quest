@@ -1,5 +1,7 @@
 import random as random
 from content.common_1000.common_1000_dic import common_1000
+from utilities.keepScore import update_score, save_scores_to_json, load_scores_from_json
+
 from gtts import gTTS
 import tempfile
 import os
@@ -7,7 +9,6 @@ import atexit
 import glob
 
 import pygame
-import time
 
 # Failsafe deletion of tempfiles created from play_text function
 def clear_temp_files():
@@ -17,7 +18,7 @@ def clear_temp_files():
         try:
             os.remove(temp_file)
         except Exception as e:
-            print(f"Error deleting {temp_file}: {e}")
+            print(f"Error deleting {temp_file}: {e}") 
 
 def play_text(text):
     tts = gTTS(text=text, lang='cs', tld='cz')
@@ -46,6 +47,8 @@ def print_title_art():
     """
     print(title)
 
+linebreak = "____________________________________________________________________________________"
+
 # Call the function at the start of your game
 print_title_art()
 
@@ -54,48 +57,55 @@ print("Czech Quest.. prepare yourself for 1000 word mastery. \n In this game you
 print("This is not an excuse to ditch the grammer lessons, because you'll still need those to make sentences, however Czech Quest is another tool up your sleeve.")
 
 def main(): 
+    print("Starting main function...")  # Debug print
+    scores = load_scores_from_json()
     pygame.mixer.init()
+    username = input("Enter your username: ")  # Moved outside the loop
     while True:
-        rnd_seed = random.randrange(1,2)
+        rnd_seed = random.randrange(1,20)
         czechWord = common_1000[rnd_seed][0]
-        correct_answer = common_1000[rnd_seed][1]  # Correct English translation
+        correct_answer = common_1000[rnd_seed][1]
 
         print("\nWhat is:", czechWord, "in English?")
         temp_file = play_text(czechWord)
 
         while True:
-            choice = input("\nPress 'a' and 'ENTER' to hear audio again, or just 'ENTER' to continue: ")
+            choice = input("\nPress 'a + ENTER' to hear audio again, or just 'ENTER' to continue: ")
             if choice == 'a':
                 temp_file = play_text(czechWord)
             elif choice == '':
                 guess = input("Enter your guess: ").strip().lower()
-                print("____________________________________________________________________________________")
-                if guess == correct_answer.lower():
-                    print("Correct")
+                is_correct = guess == correct_answer.lower()
+                update_score(scores, username, is_correct)
+                print("Calling save_scores_to_json...") # Debug 
+                save_scores_to_json(scores)
+
+                if is_correct:
+                    print("\nCorrect")
                 else:
-                    print("X")
+                    print("\nHmm, that's not right yet")
                 break
             else:
-
-                print("Invalid choice detected. Moving on to guessing phase.")
+                print("\nInvalid choice detected. Moving on to guessing phase.")
                 guess = input("Enter your guess: ").strip().lower()
-                print("____________________________________________________________________________________")
-                if guess == correct_answer.lower():
-                    print("____________________________________________________________________________________")
-                    print("Correct")
+                is_correct = guess == correct_answer.lower()
+                update_score(scores, username, is_correct)
+                print("Calling save_scores_to_json...") # Debug
+                save_scores_to_json(scores)
+
+                if is_correct:
+                    print("\nCorrect")
                 else:
-                    print("____________________________________________________________________________________")
-                    print("Hmm, that's not right yet")
+                    print("\nHmm, that's not right yet")
                 break
-
-
-        print ("Meaning: ", correct_answer)
-        print (common_1000[rnd_seed][2])
-        print("____________________________________________________________________________________")
-        print ("Víc prosím? Press ENTER")
+        
+        print("\nMeaning: ", correct_answer)
+        print(common_1000[rnd_seed][2])
+        print("\nVíc prosím? Press ENTER")
         input()
         print("__________________________Pojďme Gooo__________________________")
 
 clear_temp_files()
+
 if __name__ == "__main__":
     main()
