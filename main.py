@@ -56,8 +56,10 @@ print("This is not an excuse to ditch the grammer lessons, because you'll still 
 def main(): 
     pygame.mixer.init()
     while True:
-        rnd_seed = random.randrange(1,1001)
+        rnd_seed = random.randrange(1,2)
         czechWord = common_1000[rnd_seed][0]
+        correct_answer = common_1000[rnd_seed][1]  # Correct English translation
+
         print("\nWhat is:", czechWord, "in English?")
         temp_file = play_text(czechWord)
 
@@ -66,20 +68,30 @@ def main():
             if choice == 'a':
                 temp_file = play_text(czechWord)
             elif choice == '':
-                guess = input("Enter your guess: ")
-                print(f"You guessed: {guess}")
+                guess = input("Enter your guess: ").strip().lower()
+                print("____________________________________________________________________________________")
+                if guess == correct_answer.lower():
+                    print("Correct")
+                else:
+                    print("X")
                 break
             else:
+
                 print("Invalid choice detected. Moving on to guessing phase.")
-                guess = input("Enter your guess: ")
-                print(f"You guessed: {guess}")
+                guess = input("Enter your guess: ").strip().lower()
+                print("____________________________________________________________________________________")
+                if guess == correct_answer.lower():
+                    print("____________________________________________________________________________________")
+                    print("Correct")
+                else:
+                    print("____________________________________________________________________________________")
+                    print("Hmm, that's not right yet")
                 break
 
-        print("____________________________________________________________________________________")
-        meaning = common_1000[rnd_seed][1]
-        print ("Meaning: ", meaning)
-        print("____________________________________________________________________________________")
+
+        print ("Meaning: ", correct_answer)
         print (common_1000[rnd_seed][2])
+        print("____________________________________________________________________________________")
         print ("Víc prosím? Press ENTER")
         input()
         print("__________________________Pojďme Gooo__________________________")
