@@ -116,7 +116,7 @@ def main():
     pygame.mixer.init()
 
     username_input = input("Enter your username: ")
-    username = username_input.lower()
+    username = username_input.lower().capitalize()
 
     display_scoreboard(scores)
     progress = load_progress_from_json(username)

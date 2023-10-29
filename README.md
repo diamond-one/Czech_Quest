@@ -1,44 +1,27 @@
 # Learn_Czech
 A project to help people learn Czech 
 
-
+# Have leaderboard say who's the champ
+# Limit leaderboard so it won't show over 3 people
 # TODO Add option to say word in a sentence and then repeat it back 
-# ~~TODO if user presses shift, play sound again~~ 
+# TODO On correct choice, have words repeat once more in your session pool before disapearing
 # TODO add line breaks so the formating is nicer in the terminal 
-# TODO Add right or wrong. A Simple X for wrong and a 1 for correct would be ok? 
 # TODO add the 'sounds like' in the first prompt when you first see a czech word
-# TODO Spaced out repitition / Leitner System? https://github.com/open-spaced-repetition/py-fsrs
 # TODO Have hints
 # TODO have answer have the word in a sentence with the english translation of that sentence
-# TODO Have the app say the word back to you
-# TODO add some sort of scoreboard or points system to the game
+# ~~TODO Have the app say the word back to you~~
+# ~~TODO add some sort of scoreboard or points system to the game~~
 # TODO you need grammer in there somehow. 
-# TODO Add user login
+# ~~TODO Add user login~~
 # TODO Add in game functions. If user enters 
     :q to quit
     :su to swtich user
     :score to check score
     :update to update word list
-    :helo to see commands
+    :help to see commands
     :swtch to switch game
     :lang to switch langauge 
-    :
-
-
-
-# Score ideas
-+10 for correct
--10 for incorrect
-+50 for streak of 5 in a row
-+50 Daily bonus 
-+100 7-day streak
-Can go into negitives 
-
-# Spaced Repition
-The Lietner system
-- 3 boxes... etc
-
-
+    
 
 
 Title art from https://patorjk.com/software/taag/#p=display&f=Crawford2&t=Type%20Something%20
@@ -53,6 +36,8 @@ Adaptive Spacing Algorithm: This is an enhancement to the Leitner system. Instea
 Interleaved Practice: This strategy involves mixing new words with review words. Instead of going through all new words before reviewing, the code mixes new words with words that need to be reviewed. This has been shown to improve learning and retention.
 
 Confidence Boost Words: Including a few words that the user knows well helps maintain confidence and motivation. These words are selected from the set of words that have been answered correctly.
+
+Session limits: Wordpools in sessions are limited to 5 words, until you get one correct, if you get one correct, it is removed from the 5, and a new one replaces it
 
 ____________
 
