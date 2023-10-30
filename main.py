@@ -2,7 +2,7 @@ import random
 import pandas as pd
 import json
 import os
-from utilities.keepScore import update_score, save_scores_to_json, load_scores_from_json, display_scoreboard
+from utilities.keepScore import update_score, save_progress_to_json, load_progress_from_json, display_scoreboard
 from gtts import gTTS
 import tempfile
 import atexit
@@ -65,6 +65,23 @@ def select_word(common_1000, progress, session_words):
 
     return random.choice(word_ids)  # Fallback in case all words have been used in the session
 
+def select_new_word(common_1000, progress, session_words):
+    word_ids = list(common_1000.keys())
+    random.shuffle(word_ids)
+
+    # Prioritize words that have been answered incorrectly or are new
+    for word_id in word_ids:
+        level = progress.get(word_id, 1)
+        if (level == 1 or level == 2) and word_id not in session_words:  # Higher priority for new or frequently wrong words
+            return word_id
+
+    # If all words are above level 2, select based on Leitner system
+    for word_id in word_ids:
+        level = progress.get(word_id, 1)
+        if random.random() < (1 / level) and word_id not in session_words:
+            return word_id
+
+    return random.choice([word_id for word_id in word_ids if word_id not in session_words])
 
 # Failsafe deletion of tempfiles created from play_text function
 def clear_temp_files():
@@ -73,6 +90,8 @@ def clear_temp_files():
     for temp_file in temp_files:
         try:
             os.remove(temp_file)
+        except PermissionError:
+            print(f"Permission denied for {temp_file}. File might be in use.")
         except Exception as e:
             print(f"Error deleting {temp_file}: {e}")
 
@@ -98,8 +117,8 @@ def print_title_art():
 ██╔════╝╚══███╔╝██╔════╝██╔════╝██║  ██║    ██╔═══██╗██║   ██║██╔════╝██╔════╝╚══██╔══╝
 ██║       ███╔╝ █████╗  ██║     ███████║    ██║   ██║██║   ██║█████╗  ███████╗   ██║   
 ██║      ███╔╝  ██╔══╝  ██║     ██╔══██║    ██║▄▄ ██║██║   ██║██╔══╝  ╚════██║   ██║   
-╚██████╗███████╗███████╗╚██████╗██║  ██║    ╚██████╔╝╚██████╔╝███████╗███████║   ██║   
- ╚═════╝╚══════╝╚══════╝ ╚═════╝╚═╝  ╚═╝     ╚══▀▀═╝  ╚═════╝ ╚══════╝╚══════╝   ╚═╝   
+╚██████╗███████╗███████╗╚██████╗██║  ██║    ů██████╔╝Ś██████╔╝███████╗███████║   ██║   
+ ╚═════╝Ś══════╝Ś══════╝ ů═════╝Ś═╝  ů═╝     ů══▀▀═╝  ů═════╝ ů══════╝Ś══════╝   ů═╝   
     """
     print(title)
 
@@ -109,50 +128,46 @@ print_title_art()
 # Game Intro
 print("                Czech Quest.. prepare yourself for 1000 word mastery! \n")
 
-
 def main():
-    print("Starting main function...\n")
-    scores = load_scores_from_json()
+    print("Starting main function...")  # Debug print
     common_1000 = load_data_from_excel('content/common_1000/common_1000.xlsx')
     pygame.mixer.init()
 
-    display_scoreboard(scores)
-
     username_input = input("Enter your username: ")
-    username = username_input.lower().capitalize()
+    username = username_input.lower().capitalize()  # Convert to lowercase for consistency
 
-
+    # Load the progress for the user
     progress = load_progress_from_json(username)
 
-    session_words = set()  # Keep track of words used in the current session
+    # Display the scoreboard for the user
+    display_scoreboard()
+
+    # Initialize session words
+    session_words = set()
 
     while True:
-        if len(session_words) < 5:
-            word_id = select_word(common_1000, progress, session_words)
-            session_words.add(word_id)  # Add the selected word to the session set
-        else:
-            word_id = random.choice(list(session_words))
-
+        word_id = select_word(common_1000, progress, session_words)
         czechWord = common_1000[word_id]['Czech']
         correct_answer = common_1000[word_id]['English']
 
         print("\nWhat is:", czechWord, "in English?")
         temp_file = play_text(czechWord)
 
-        guess = input("\nEnter your guess: ").strip().lower()
+        guess = input("Enter your guess: ").strip().lower()
         is_correct = guess == correct_answer.lower()
 
         # Get the previous streak before updating the score
-        previous_streak = scores.get(username, {}).get("streak", 0)
+        previous_streak = progress.get(username, {}).get("streak", 0)
 
         # Update the score with the current answer and previous streak
-        update_score(scores, username, is_correct, previous_streak)
+        update_score(progress, username, is_correct, previous_streak)
 
-        save_scores_to_json(scores)
+        save_progress_to_json(username, progress)
 
         if is_correct:
             print("\nCorrect")
-            session_words.remove(word_id)  # Remove the word from the session set
+            # Remove the word from session words if the answer is correct
+            session_words.discard(word_id)
         else:
             print("\nHmm, that's not right yet")
 
@@ -163,6 +178,12 @@ def main():
         print("\nMeaning: ", correct_answer)
         print(common_1000[word_id]['Mnemonic'])
         print("__________________________Pojďme Gooo__________________________")
+
+        # Check if session words limit is reached
+        if len(session_words) < 20:
+            # Add new word to session words
+            new_word_id = select_new_word(common_1000, progress, session_words)
+            session_words.add(new_word_id)
 
 clear_temp_files()
 

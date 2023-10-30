@@ -1,11 +1,11 @@
 import json
 import os
 
-def update_score(scores, username, is_correct, previous_streak):
-    if username not in scores:
-        scores[username] = {"correct": 0, "points": 0, "streak": 0, "longest_streak": 0}
+def update_score(progress, username, is_correct, previous_streak):
+    if 'scores' not in progress:
+        progress['scores'] = {"correct": 0, "points": 0, "streak": 0, "longest_streak": 0}
 
-    user_scores = scores[username]
+    user_scores = progress['scores']
     if 'points' not in user_scores:
         user_scores['points'] = 0
     if 'streak' not in user_scores:
@@ -31,34 +31,51 @@ def update_score(scores, username, is_correct, previous_streak):
     if previous_streak > user_scores["longest_streak"]:
         user_scores["longest_streak"] = previous_streak
 
-
-def save_scores_to_json(scores):
-    file_path = os.path.join(os.getcwd(), "data", "scores.json")
+def save_progress_to_json(username, progress):
+    file_path = os.path.join(os.getcwd(), "data", f"progress_{username}.json")
     try:
         with open(file_path, "w") as file:
-            json.dump(scores, file)
+            json.dump(progress, file)
     except Exception as e:
-        print(f"Error saving scores: {e}")
+        print(f"Error saving progress: {e}")
 
-def load_scores_from_json():
-    file_path = os.path.join("data", "scores.json")
+def load_progress_from_json(username):
+    file_path = os.path.join("data", f"progress_{username}.json")
     try:
         with open(file_path, "r") as file:
             return json.load(file)
     except FileNotFoundError:
         return {}
 
-def display_scoreboard(scores):
-    if scores:
-        print("\nLeaderboard:")
-        # Sort users based on their total points in descending order
-        sorted_users = sorted(scores.items(), key=lambda x: x[1]['points'], reverse=True)
-        
-        for username, user_scores in sorted_users:
-            print("═════════════════════════════════════════")
-            print(f"Player: {username}")
-            print(f"Total Points: {user_scores['points']}")
-            print(f"Longest Streak: {user_scores['longest_streak']}")
-            print("═════════════════════════════════════════")
-    else:
+import os
+import json
+
+def display_scoreboard():
+    scores_directory = os.path.join(os.getcwd(), "data")
+    all_scores = []
+
+    # Iterate through all progress files and collect scores
+    for filename in os.listdir(scores_directory):
+        if filename.startswith("progress_") and filename.endswith(".json"):
+            file_path = os.path.join(scores_directory, filename)
+            try:
+                with open(file_path, "r") as file:
+                    user_progress = json.load(file)
+                    if 'scores' in user_progress:
+                        username = filename.replace("progress_", "").replace(".json", "")
+                        user_scores = user_progress['scores']
+                        all_scores.append((username, user_scores['points'], user_scores['longest_streak']))
+            except Exception as e:
+                print(f"Error reading {filename}: {e}")
+
+    # Sort the scores in descending order based on points
+    all_scores.sort(key=lambda x: x[1], reverse=True)
+
+    # Display the top three scores
+    print("\nTop 3 Players:")
+    for i, (username, points, longest_streak) in enumerate(all_scores[:3], start=1):
+        print(f"{i}. {username} - Points: {points}, Longest Streak: {longest_streak}")
+
+    if not all_scores:
         print("No scores found. Let's start playing!\n")
+
