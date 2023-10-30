@@ -72,6 +72,7 @@ def display_scoreboard():
     all_scores.sort(key=lambda x: x[1], reverse=True)
 
     # Display the top three scores
+    print("\n LEADERBOARD")
     print("\nTop 3 Players:")
     for i, (username, points, longest_streak) in enumerate(all_scores[:3], start=1):
         print(f"{i}. {username} - Points: {points}, Longest Streak: {longest_streak}")
