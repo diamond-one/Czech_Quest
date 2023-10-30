@@ -24,7 +24,7 @@ def update_score(scores, username, is_correct, previous_streak):
         if user_scores["streak"] > user_scores["longest_streak"]:
             user_scores["longest_streak"] = user_scores["streak"]
     else:
-        user_scores["points"] -= 10  # Deduct 10 points for wrong answer
+        user_scores["points"] -= 5  # Deduct 5 points for wrong answer
         user_scores["streak"] = 0  # Reset streak on wrong answer
 
     # Update longest streak if previous streak was greater

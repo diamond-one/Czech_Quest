@@ -107,18 +107,21 @@ def print_title_art():
 print_title_art()
 
 # Game Intro
-print("Czech Quest.. prepare yourself for 1000 word mastery! \n")
+print("                Czech Quest.. prepare yourself for 1000 word mastery! \n")
+
 
 def main():
-    print("Starting main function...")
+    print("Starting main function...\n")
     scores = load_scores_from_json()
     common_1000 = load_data_from_excel('content/common_1000/common_1000.xlsx')
     pygame.mixer.init()
 
+    display_scoreboard(scores)
+
     username_input = input("Enter your username: ")
     username = username_input.lower().capitalize()
 
-    display_scoreboard(scores)
+
     progress = load_progress_from_json(username)
 
     session_words = set()  # Keep track of words used in the current session
