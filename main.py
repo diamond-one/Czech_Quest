@@ -172,6 +172,7 @@ def main():
         czech_sentence = common_1000[word_id]['Czech Sentence']  # Load audio text from the correct column
         english_translation = common_1000[word_id]['English Translation']
         correct_answer = common_1000[word_id]['English']
+        correct_sentence = common_1000[word_id]['English Translation']
 
         print("\nWhat is:", czech_word, "in English?")
         print("in a sentance: ", czech_sentence)  # Display audio text
@@ -179,7 +180,8 @@ def main():
         temp_file = play_text(czech_word, czech_sentence)  # Play audio for both Czech word and audio text
 
         guess = input("Enter your guess: ").strip().lower()
-        is_correct = guess == correct_answer.lower()
+        is_correct = guess == correct_answer.lower() or guess == correct_sentence.lower()
+
 
         # Get the previous streak before updating the score
         previous_streak = progress.get(username, {}).get("streak", 0)
@@ -201,7 +203,7 @@ def main():
         save_progress_to_json(username, progress)
 
         print("\nMeaning: ", correct_answer)
-        print("The Czech Sentence Tranlation: ", english_translation)  # Display audio text
+        print("Sentence Tranlation: ", english_translation)  # Display audio text
         print("Mnemonic:", common_1000[word_id]['Mnemonic'])
         input()
         print("__________________________Pojďme Gooo__________________________")
