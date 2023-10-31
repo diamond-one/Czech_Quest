@@ -154,7 +154,7 @@ def main():
     common_1000 = load_data_from_excel('content/common_1000/common_1000.xlsx')
     pygame.mixer.init()
 
-    username_input = input("Enter your username: ")
+    username_input = input("\nEnter your username: ")
     username = username_input.lower().capitalize()  # Convert to lowercase for consistency
 
     # Load the progress for the user
@@ -162,6 +162,7 @@ def main():
 
     # Display the scoreboard for the user
     display_scoreboard()
+    print("____________________________________________________")
 
     # Initialize session words
     session_words = set()
@@ -170,17 +171,16 @@ def main():
         word_id = select_word(common_1000, progress, session_words)
         czech_word = common_1000[word_id]['Czech']
         czech_sentence = common_1000[word_id]['Czech Sentence']  # Load audio text from the correct column
-        english_translation = common_1000[word_id]['English Translation']
+        eng_sentence_translation = common_1000[word_id]['English Translation']
         correct_answer = common_1000[word_id]['English']
-        correct_sentence = common_1000[word_id]['English Translation']
-
+        # print(eng_sentence_translation) # DEBUG
         print("\nWhat is:", czech_word, "in English?")
         print("in a sentance: ", czech_sentence)  # Display audio text
 
         temp_file = play_text(czech_word, czech_sentence)  # Play audio for both Czech word and audio text
 
         guess = input("Enter your guess: ").strip().lower()
-        is_correct = guess == correct_answer.lower() or guess == correct_sentence.lower()
+        is_correct = guess == correct_answer.lower() or guess == eng_sentence_translation.lower()
 
 
         # Get the previous streak before updating the score
@@ -202,11 +202,13 @@ def main():
         update_progress(progress, word_id, is_correct)
         save_progress_to_json(username, progress)
 
+        print("____________________________________________________")
         print("\nMeaning: ", correct_answer)
-        print("Sentence Tranlation: ", english_translation)  # Display audio text
-        print("Mnemonic:", common_1000[word_id]['Mnemonic'])
-        input()
-        print("__________________________Pojďme Gooo__________________________")
+        print("____________________________________________________")        
+        print("\nSentence Tranlation: ", eng_sentence_translation)  # Display audio text
+        print("____________________________________________________")        
+        print("\nMnemonic:", common_1000[word_id]['Mnemonic'])
+        print("____________________________________________________")
 
         # Check if the session word limit is reached
         if len(session_words) < 5:
