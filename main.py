@@ -53,8 +53,8 @@ def select_word(common_1000, progress, session_words):
                 return word_id
 
     # Confidence Boost Words: Include words that the user knows well
-    if len(session_words) % 5 == 0:  # Every 5th word
-        known_words = [word_id for word_id, level in progress.items() if level > 3 and word_id not in session_words]
+    if len(session_words) % 3 == 0:  # Every 5th word
+        known_words = [word_id for word_id, level in progress.items() if level > 1 and word_id not in session_words]
         if known_words:
             return random.choice(known_words)
 
@@ -69,19 +69,21 @@ def select_new_word(common_1000, progress, session_words):
     word_ids = list(common_1000.keys())
     random.shuffle(word_ids)
 
-    # Prioritize words that have been answered incorrectly or are new
-    for word_id in word_ids:
-        level = progress.get(word_id, 1)
-        if (level == 1 or level == 2) and word_id not in session_words:  # Higher priority for new or frequently wrong words
-            return word_id
+    # Collect eligible new words
+    eligible_new_words = [word_id for word_id in word_ids if word_id not in session_words]
 
     # If all words are above level 2, select based on Leitner system
-    for word_id in word_ids:
-        level = progress.get(word_id, 1)
-        if random.random() < (1 / level) and word_id not in session_words:
-            return word_id
+    if not eligible_new_words:
+        for word_id in word_ids:
+            level = progress.get(word_id, 1)
+            if random.random() < (1 / level) and word_id not in session_words:
+                return word_id
 
-    return random.choice([word_id for word_id in word_ids if word_id not in session_words])
+    # Filter eligible new words based on the word limit
+    eligible_new_words = eligible_new_words[:min(5, len(eligible_new_words))]
+
+    return random.choice(eligible_new_words)
+
 
 # Failsafe deletion of tempfiles created from play_text function
 def clear_temp_files():
@@ -95,21 +97,40 @@ def clear_temp_files():
         except Exception as e:
             print(f"Error deleting {temp_file}: {e}")
 
-def play_text(text):
-    tts = gTTS(text=text, lang='cs', tld='cz')
-    fd, temp_filename = tempfile.mkstemp()
-    os.close(fd)
-    
+def play_text(czech_word, audio_text):
+    # Play the Czech word audio
+    tts_czech = gTTS(text=czech_word, lang='cs', tld='cz')
+    fd_czech, temp_filename_czech = tempfile.mkstemp()
+    os.close(fd_czech)
+
     try:
-        tts.save(temp_filename)
-        pygame.mixer.music.load(temp_filename)
+        tts_czech.save(temp_filename_czech)
+        pygame.mixer.music.load(temp_filename_czech)
         pygame.mixer.music.play()
         while pygame.mixer.music.get_busy():
             pygame.time.Clock().tick(10)
     finally:
         pygame.mixer.music.stop()
-    atexit.register(os.remove, temp_filename)
-    return temp_filename
+        atexit.register(os.remove, temp_filename_czech)
+
+    # Play the Audio Text
+    tts_audio_text = gTTS(text=audio_text, lang='cs', tld='cz')
+    fd_audio_text, temp_filename_audio_text = tempfile.mkstemp()
+    os.close(fd_audio_text)
+
+    try:
+        tts_audio_text.save(temp_filename_audio_text)
+        pygame.mixer.music.load(temp_filename_audio_text)
+        pygame.mixer.music.play()
+        while pygame.mixer.music.get_busy():
+            pygame.time.Clock().tick(10)
+    finally:
+        pygame.mixer.music.stop()
+        atexit.register(os.remove, temp_filename_audio_text)
+
+    return temp_filename_audio_text  # Return the temp audio file for cleanup
+
+
 
 def print_title_art():
     title = """
@@ -147,11 +168,15 @@ def main():
 
     while True:
         word_id = select_word(common_1000, progress, session_words)
-        czechWord = common_1000[word_id]['Czech']
+        czech_word = common_1000[word_id]['Czech']
+        czech_sentence = common_1000[word_id]['Czech Sentence']  # Load audio text from the correct column
+        english_translation = common_1000[word_id]['English Translation']
         correct_answer = common_1000[word_id]['English']
 
-        print("\nWhat is:", czechWord, "in English?")
-        temp_file = play_text(czechWord)
+        print("\nWhat is:", czech_word, "in English?")
+        print("in a sentance: ", czech_sentence)  # Display audio text
+
+        temp_file = play_text(czech_word, czech_sentence)  # Play audio for both Czech word and audio text
 
         guess = input("Enter your guess: ").strip().lower()
         is_correct = guess == correct_answer.lower()
@@ -171,21 +196,23 @@ def main():
         else:
             print("\nHmm, that's not right yet")
 
-        # Update progress based on user's answer
+        # Update progress based on the user's answer
         update_progress(progress, word_id, is_correct)
         save_progress_to_json(username, progress)
 
         print("\nMeaning: ", correct_answer)
-        print(common_1000[word_id]['Mnemonic'])
+        print("The Czech Sentence Tranlation: ", english_translation)  # Display audio text
+        print("Mnemonic:", common_1000[word_id]['Mnemonic'])
+        input()
         print("__________________________Pojďme Gooo__________________________")
 
-        # Check if session words limit is reached
-        if len(session_words) < 20:
-            # Add new word to session words
+        # Check if the session word limit is reached
+        if len(session_words) < 5:
+            # Add a new word to session words
             new_word_id = select_new_word(common_1000, progress, session_words)
             session_words.add(new_word_id)
 
-clear_temp_files()
+        clear_temp_files()
 
 if __name__ == "__main__":
     main()
