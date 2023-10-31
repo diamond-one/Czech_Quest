@@ -2,12 +2,17 @@ import random
 import pandas as pd
 import json
 import os
-from utilities.keepScore import update_score, save_progress_to_json, load_progress_from_json, display_scoreboard
 from gtts import gTTS
 import tempfile
 import atexit
 import glob
 import pygame
+
+from utilities.keepScore import update_score, save_progress_to_json, load_progress_from_json, display_scoreboard
+from utilities.command_handler import handle_commands
+from utilities.title import print_title_art
+
+
 
 # Load data from Excel file
 def load_data_from_excel(file_path):
@@ -130,54 +135,15 @@ def play_text(czech_word, audio_text):
 
     return temp_filename_audio_text  # Return the temp audio file for cleanup
 
-def handle_commands(user_input, common_1000, progress, session_words, username):
-    if user_input == ":q!":
-        print("Quitting game...")
-        exit()
-    elif user_input == ":su":
-        print("Switching user...")
-        # Add logic to switch user
-    elif user_input == ":score":
-        print("Displaying scoreboard...")
-        display_scoreboard()
-    elif user_input == ":new":
-        print("Starting a new game...")
-        # Add logic to start a new game
-    elif user_input == ":help":
-        print("Displaying help...")
-        # Display available commands
-    elif user_input == ":show":
-        print("Words in pool:")
-        # Add logic to show words in pool
-    elif user_input == ":hint":
-        print("Showing hint...")
-        # Add logic for showing hint
-    elif user_input == ":shint":
-        print("Showing hint on first sighting...")
-        # Add logic for showing hint on first sighting
-    else:
-        return False  # Indicates that it was not a command
-    return True  # Indicates that it was a command
+###############################################################################################################
 
-def print_title_art():
-    title = """
- ██████╗███████╗███████╗ ██████╗██╗  ██╗     ██████╗ ██╗   ██╗███████╗███████╗████████╗
-██╔════╝╚══███╔╝██╔════╝██╔════╝██║  ██║    ██╔═══██╗██║   ██║██╔════╝██╔════╝╚══██╔══╝
-██║       ███╔╝ █████╗  ██║     ███████║    ██║   ██║██║   ██║█████╗  ███████╗   ██║   
-██║      ███╔╝  ██╔══╝  ██║     ██╔══██║    ██║▄▄ ██║██║   ██║██╔══╝  ╚════██║   ██║   
-╚██████╗███████╗███████╗╚██████╗██║  ██║    ů██████╔╝Ś██████╔╝███████╗███████║   ██║   
- ╚═════╝Ś══════╝Ś══════╝ ů═════╝Ś═╝  ů═╝     ů══▀▀═╝  ů═════╝ ů══════╝Ś══════╝   ů═╝   
-    """
-    print(title)
-
-# Call the function at the start of your game
 print_title_art()
 
 # Game Intro
 print("                Czech Quest.. prepare yourself for 1000 word mastery! \n")
 
 def main():
-    print("Starting main function...")  # Debug print
+    print("Starting journey...")  
     common_1000 = load_data_from_excel('content/common_1000/common_1000.xlsx')
     pygame.mixer.init()
 
@@ -207,7 +173,7 @@ def main():
         temp_file = play_text(czech_word, czech_sentence)  # Play audio for both Czech word and audio text
 
         guess = input("Enter your guess or a command: ").strip().lower()
-
+    
         if handle_commands(guess, common_1000, progress, session_words, username):
             continue  # Skip the rest of the loop since a command was executed
 
