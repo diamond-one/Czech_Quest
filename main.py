@@ -130,7 +130,34 @@ def play_text(czech_word, audio_text):
 
     return temp_filename_audio_text  # Return the temp audio file for cleanup
 
-
+def handle_commands(user_input, common_1000, progress, session_words, username):
+    if user_input == ":q!":
+        print("Quitting game...")
+        exit()
+    elif user_input == ":su":
+        print("Switching user...")
+        # Add logic to switch user
+    elif user_input == ":score":
+        print("Displaying scoreboard...")
+        display_scoreboard()
+    elif user_input == ":new":
+        print("Starting a new game...")
+        # Add logic to start a new game
+    elif user_input == ":help":
+        print("Displaying help...")
+        # Display available commands
+    elif user_input == ":show":
+        print("Words in pool:")
+        # Add logic to show words in pool
+    elif user_input == ":hint":
+        print("Showing hint...")
+        # Add logic for showing hint
+    elif user_input == ":shint":
+        print("Showing hint on first sighting...")
+        # Add logic for showing hint on first sighting
+    else:
+        return False  # Indicates that it was not a command
+    return True  # Indicates that it was a command
 
 def print_title_art():
     title = """
@@ -179,9 +206,12 @@ def main():
 
         temp_file = play_text(czech_word, czech_sentence)  # Play audio for both Czech word and audio text
 
-        guess = input("Enter your guess: ").strip().lower()
-        is_correct = guess == correct_answer.lower() or guess == eng_sentence_translation.lower()
+        guess = input("Enter your guess or a command: ").strip().lower()
 
+        if handle_commands(guess, common_1000, progress, session_words, username):
+            continue  # Skip the rest of the loop since a command was executed
+
+        is_correct = guess == correct_answer.lower() or guess == eng_sentence_translation.lower()
 
         # Get the previous streak before updating the score
         previous_streak = progress.get(username, {}).get("streak", 0)
@@ -210,7 +240,6 @@ def main():
         print("____________________________________________________")   
         print("____________________________________________________")     
         input()
-
 
         # Check if the session word limit is reached
         if len(session_words) < 5:

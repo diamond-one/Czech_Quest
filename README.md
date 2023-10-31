@@ -65,4 +65,3 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 Start your journey to Czech mastery with Czech Quest today! 🚀🇨🇿
 
-![Czech Quest](path/to/czech_quest_image.jpg) # Replace with an image link if available.
