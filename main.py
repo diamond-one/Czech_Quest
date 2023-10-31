@@ -9,8 +9,9 @@ import glob
 import pygame
 
 from utilities.keepScore import update_score, save_progress_to_json, load_progress_from_json, display_scoreboard
-from utilities.command_handler import handle_commands
+from utilities.command_handler import handle_commands, get_audio_status, print_help
 from utilities.title import print_title_art
+
 
 
 
@@ -138,9 +139,12 @@ def play_text(czech_word, audio_text):
 ###############################################################################################################
 
 print_title_art()
+print_help()
 
 # Game Intro
 print("                Czech Quest.. prepare yourself for 1000 word mastery! \n")
+
+
 
 def main():
     print("Starting journey...")  
@@ -170,10 +174,11 @@ def main():
         print("\nWhat is:", czech_word, "in English?")
         print("in a sentance: ", czech_sentence)  # Display audio text
 
-        temp_file = play_text(czech_word, czech_sentence)  # Play audio for both Czech word and audio text
+        if get_audio_status() == True:
+            temp_file = play_text(czech_word, czech_sentence)  # Play audio for both Czech word and audio text
 
         guess = input("Enter your guess or a command: ").strip().lower()
-    
+        
         if handle_commands(guess, common_1000, progress, session_words, username):
             continue  # Skip the rest of the loop since a command was executed
 

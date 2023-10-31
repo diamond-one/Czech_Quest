@@ -76,6 +76,7 @@ def display_scoreboard():
     print("\nTop 3 Players:")
     for i, (username, points, longest_streak) in enumerate(all_scores[:3], start=1):
         print(f"{i}. {username} - Points: {points}, Longest Streak: {longest_streak}")
+        print("____________________________________________________")
 
     if not all_scores:
         print("No scores found. Let's start playing!\n")
