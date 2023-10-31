@@ -13,8 +13,6 @@ from utilities.command_handler import handle_commands, get_audio_status, print_h
 from utilities.title import print_title_art
 
 
-
-
 # Load data from Excel file
 def load_data_from_excel(file_path):
     df = pd.read_excel(file_path)
@@ -145,7 +143,6 @@ print_help()
 print("                Czech Quest.. prepare yourself for 1000 word mastery! \n")
 
 
-
 def main():
     print("Starting journey...")  
     common_1000 = load_data_from_excel('content/common_1000/common_1000.xlsx')
@@ -169,6 +166,7 @@ def main():
         czech_word = common_1000[word_id]['Czech']
         czech_sentence = common_1000[word_id]['Czech Sentence']  # Load audio text from the correct column
         eng_sentence_translation = common_1000[word_id]['English Translation']
+        eng_sentence_lower = common_1000[word_id]['English Translation'].lower()
         correct_answer = common_1000[word_id]['English']
         # print(eng_sentence_translation) # DEBUG
         print("\nWhat is:", czech_word, "in English?")
@@ -182,7 +180,9 @@ def main():
         if handle_commands(guess, common_1000, progress, session_words, username):
             continue  # Skip the rest of the loop since a command was executed
 
-        is_correct = guess == correct_answer.lower() or guess == eng_sentence_translation.lower()
+        is_correct = guess == correct_answer.lower() or guess == eng_sentence_lower
+        print(eng_sentence_translation)
+        print(eng_sentence_lower)
 
         # Get the previous streak before updating the score
         previous_streak = progress.get(username, {}).get("streak", 0)

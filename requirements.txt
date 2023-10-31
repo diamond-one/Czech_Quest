@@ -2,4 +2,3 @@ pandas
 openpyxl
 gtts
 pygame
-playsound
