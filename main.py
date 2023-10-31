@@ -192,11 +192,11 @@ def main():
         save_progress_to_json(username, progress)
 
         if is_correct:
-            print("\nCorrect")
+            print("\nCorrect, Correct, Correct, Correct, Correct")
             # Remove the word from session words if the answer is correct
             session_words.discard(word_id)
         else:
-            print("\nHmm, that's not right yet")
+            print("\nIncorrect, Incorrect, Incorrect, Incorrect, Incorrect")
 
         # Update progress based on the user's answer
         update_progress(progress, word_id, is_correct)
@@ -204,11 +204,13 @@ def main():
 
         print("____________________________________________________")
         print("\nMeaning: ", correct_answer)
-        print("____________________________________________________")        
-        print("\nSentence Tranlation: ", eng_sentence_translation)  # Display audio text
-        print("____________________________________________________")        
         print("\nMnemonic:", common_1000[word_id]['Mnemonic'])
-        print("____________________________________________________")
+        print("____________________________________________________")        
+        print("\n", czech_sentence, ":", eng_sentence_translation)  # Display audio text
+        print("____________________________________________________")   
+        print("____________________________________________________")     
+        input()
+
 
         # Check if the session word limit is reached
         if len(session_words) < 5:
