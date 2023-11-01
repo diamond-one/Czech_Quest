@@ -165,6 +165,7 @@ def main():
     while True:
         if word_id is None:
             word_id = select_word(common_1000, progress, session_words)
+            session_words.add(word_id)  # Add the selected word to the session_words set
             czech_word = common_1000[word_id]['Czech']
             czech_sentence = common_1000[word_id]['Czech Sentence']
             eng_sentence_translation = common_1000[word_id]['English Translation']
@@ -180,6 +181,7 @@ def main():
         command_executed = handle_commands(guess, common_1000, progress, session_words, username)
 
         if command_executed:
+            word_id = None  # Reset word_id to select a new word in the next iteration
             continue  # If a command was executed, repeat the loop without changing the word
 
         is_correct = guess == correct_answer.lower() or guess == eng_sentence_lower
@@ -201,13 +203,25 @@ def main():
         print("____________________________________________________")        
         print("\n", czech_sentence, ":", eng_sentence_translation)  # Display audio text
         print("____________________________________________________")   
-        
-        # Ask the user if they want to continue
-        input("Soak that in for a moment. Want more?").strip().lower()
 
+        # Ask the user if they want to continue or enter a command
+        user_input = input("Soak that in for a moment. Want more or enter a command: ").strip().lower()
+
+        # Check if the input is a command
+        if user_input.startswith(':'):  # Assuming commands start with ':'
+            command_executed = handle_commands(user_input, common_1000, progress, session_words, username)
+            if command_executed:
+                word_id = None  # Reset word_id to select a new word in the next iteration
+                continue  # If a command was executed, repeat the loop without changing the word
+        else:
+            # Handle the response to the prompt
+            if user_input not in ['yes', 'y']:
+                break  # Exit the loop if the user doesn't want to continue
 
         word_id = None  # Reset word_id to select a new word in the next iteration
         clear_temp_files()
+
+
 
 if __name__ == "__main__":
     main()
