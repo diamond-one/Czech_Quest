@@ -1,8 +1,9 @@
 # command_handler.py
 from utilities.keepScore import display_scoreboard
-import os
 import sys
 import subprocess
+
+
 
 audio_enable = True
 
@@ -24,9 +25,10 @@ def print_help():
     :help    - Display this help message showing available commands.
     :so      - Sound OFF/ON - Recomended when not using sound, so things are fast.
     :show    - Show the words currently in your learning pool.
-    :hint    - ~~Show a hint for the current word (if hints are enabled).~~
-    :shint   - ~~Show a hint on the first sighting of a word (if hints are enabled).~~
+
     """
+    # :hint    - Show a hint for the current word (if hints are enabled).
+    # :shint   - Show a hint on the first sighting of a word (if hints are enabled).
     print(help_text)
 
 def get_audio_status():
@@ -39,10 +41,16 @@ def toggle_audio():
     return audio_enable
 
 def print_words_in_pool(common_1000, session_words):
-    print("\nWords in current pool:")
+    print("\nWords in current session pool:")
+    print("Debug: session_words =", session_words)  # Debugging print statement
     for word_id in session_words:
-        word_data = common_1000[word_id]
-        print(f"- {word_data['Czech']} (English: {word_data['English']})")
+        word_data = common_1000.get(word_id, {})
+        if word_data:
+            print(f"- {word_data.get('Czech', 'Unknown')} (English: {word_data.get('English', 'Unknown')})")
+
+
+
+
 
 def handle_commands(user_input, common_1000, progress, session_words, username):
    

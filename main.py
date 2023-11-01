@@ -12,7 +12,6 @@ from utilities.keepScore import update_score, save_progress_to_json, load_progre
 from utilities.command_handler import handle_commands, get_audio_status, print_help
 from utilities.title import print_title_art
 
-
 # Load data from Excel file
 def load_data_from_excel(file_path):
     df = pd.read_excel(file_path)
@@ -76,18 +75,11 @@ def select_new_word(common_1000, progress, session_words):
     # Collect eligible new words
     eligible_new_words = [word_id for word_id in word_ids if word_id not in session_words]
 
-    # If all words are above level 2, select based on Leitner system
+    # If there are no eligible new words, select any word not in session
     if not eligible_new_words:
-        for word_id in word_ids:
-            level = progress.get(word_id, 1)
-            if random.random() < (1 / level) and word_id not in session_words:
-                return word_id
-
-    # Filter eligible new words based on the word limit
-    eligible_new_words = eligible_new_words[:min(5, len(eligible_new_words))]
+        eligible_new_words = [word_id for word_id in word_ids if word_id not in session_words]
 
     return random.choice(eligible_new_words)
-
 
 # Failsafe deletion of tempfiles created from play_text function
 def clear_temp_files():
@@ -142,7 +134,6 @@ print_help()
 # Game Intro
 print("                Czech Quest.. prepare yourself for 1000 word mastery! \n")
 
-
 def main():
     print("Starting journey...")  
     common_1000 = load_data_from_excel('content/common_1000/common_1000.xlsx')
@@ -160,6 +151,14 @@ def main():
 
     # Initialize session words
     session_words = set()
+
+    # Define maximum session size
+    max_session_size = 10
+
+    # Select initial session words
+    while len(session_words) < max_session_size:
+        new_word_id = select_new_word(common_1000, progress, session_words)
+        session_words.add(new_word_id)
 
     while True:
         word_id = select_word(common_1000, progress, session_words)
@@ -181,11 +180,13 @@ def main():
             continue  # Skip the rest of the loop since a command was executed
 
         is_correct = guess == correct_answer.lower() or guess == eng_sentence_lower
-        print(eng_sentence_translation)
-        print(eng_sentence_lower)
 
         # Get the previous streak before updating the score
         previous_streak = progress.get(username, {}).get("streak", 0)
+
+        if len(session_words) < max_session_size:
+            new_word_id = select_new_word(common_1000, progress, session_words)
+            session_words.add(new_word_id)
 
         # Update the score with the current answer and previous streak
         update_score(progress, username, is_correct, previous_streak)
@@ -209,11 +210,13 @@ def main():
         print("____________________________________________________")        
         print("\n", czech_sentence, ":", eng_sentence_translation)  # Display audio text
         print("____________________________________________________")   
-        print("____________________________________________________")     
-        input()
+        input("Soak that in for a momement. Want more?").strip().lower()
+        
+        if handle_commands(guess, common_1000, progress, session_words, username):
+            continue  # Skip the rest of the loop since a command was executed
 
         # Check if the session word limit is reached
-        if len(session_words) < 5:
+        if len(session_words) < max_session_size:
             # Add a new word to session words
             new_word_id = select_new_word(common_1000, progress, session_words)
             session_words.add(new_word_id)
