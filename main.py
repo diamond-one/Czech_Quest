@@ -213,10 +213,6 @@ def main():
             if command_executed:
                 word_id = None  # Reset word_id to select a new word in the next iteration
                 continue  # If a command was executed, repeat the loop without changing the word
-        else:
-            # Handle the response to the prompt
-            if user_input not in ['yes', 'y']:
-                break  # Exit the loop if the user doesn't want to continue
 
         word_id = None  # Reset word_id to select a new word in the next iteration
         clear_temp_files()
