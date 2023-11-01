@@ -160,43 +160,34 @@ def main():
         new_word_id = select_new_word(common_1000, progress, session_words)
         session_words.add(new_word_id)
 
+    word_id = None  # Initialize word_id outside the loop
+
     while True:
-        word_id = select_word(common_1000, progress, session_words)
-        czech_word = common_1000[word_id]['Czech']
-        czech_sentence = common_1000[word_id]['Czech Sentence']  # Load audio text from the correct column
-        eng_sentence_translation = common_1000[word_id]['English Translation']
-        eng_sentence_lower = common_1000[word_id]['English Translation'].lower()
-        correct_answer = common_1000[word_id]['English']
-        # print(eng_sentence_translation) # DEBUG
-        print("\nWhat is:", czech_word, "in English?")
-        print("in a sentance: ", czech_sentence)  # Display audio text
+        if word_id is None:
+            word_id = select_word(common_1000, progress, session_words)
+            czech_word = common_1000[word_id]['Czech']
+            czech_sentence = common_1000[word_id]['Czech Sentence']
+            eng_sentence_translation = common_1000[word_id]['English Translation']
+            eng_sentence_lower = eng_sentence_translation.strip().lower()
+            correct_answer = common_1000[word_id]['English']
+            print("\nWhat is:", czech_word, "in English?")
+            print("in a sentence: ", czech_sentence)
 
-        if get_audio_status() == True:
-            temp_file = play_text(czech_word, czech_sentence)  # Play audio for both Czech word and audio text
+            if get_audio_status() == True:
+                temp_file = play_text(czech_word, czech_sentence)
 
-        guess = input("Enter your guess or a command: ").strip().lower()
-        
-        if handle_commands(guess, common_1000, progress, session_words, username):
-            continue  # Skip the rest of the loop since a command was executed
+        guess = input("\nEnter your guess or a command: ").strip().lower()
+        command_executed = handle_commands(guess, common_1000, progress, session_words, username)
+
+        if command_executed:
+            continue  # If a command was executed, repeat the loop without changing the word
 
         is_correct = guess == correct_answer.lower() or guess == eng_sentence_lower
 
-        # Get the previous streak before updating the score
-        previous_streak = progress.get(username, {}).get("streak", 0)
-
-        if len(session_words) < max_session_size:
-            new_word_id = select_new_word(common_1000, progress, session_words)
-            session_words.add(new_word_id)
-
-        # Update the score with the current answer and previous streak
-        update_score(progress, username, is_correct, previous_streak)
-
-        save_progress_to_json(username, progress)
-
         if is_correct:
             print("\nCorrect, Correct, Correct, Correct, Correct")
-            # Remove the word from session words if the answer is correct
             session_words.discard(word_id)
+            word_id = None  # Reset word_id to select a new word in the next iteration
         else:
             print("\nIncorrect, Incorrect, Incorrect, Incorrect, Incorrect")
 
@@ -210,17 +201,12 @@ def main():
         print("____________________________________________________")        
         print("\n", czech_sentence, ":", eng_sentence_translation)  # Display audio text
         print("____________________________________________________")   
-        input("Soak that in for a momement. Want more?").strip().lower()
         
-        if handle_commands(guess, common_1000, progress, session_words, username):
-            continue  # Skip the rest of the loop since a command was executed
+        # Ask the user if they want to continue
+        input("Soak that in for a moment. Want more?").strip().lower()
 
-        # Check if the session word limit is reached
-        if len(session_words) < max_session_size:
-            # Add a new word to session words
-            new_word_id = select_new_word(common_1000, progress, session_words)
-            session_words.add(new_word_id)
 
+        word_id = None  # Reset word_id to select a new word in the next iteration
         clear_temp_files()
 
 if __name__ == "__main__":

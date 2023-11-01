@@ -3,8 +3,6 @@ from utilities.keepScore import display_scoreboard
 import sys
 import subprocess
 
-
-
 audio_enable = True
 
 def restart_script():
@@ -23,10 +21,9 @@ def print_help():
     :lb      - Display the current Leaderboard.
     :new     - Start a new game, as if you've just logged in.
     :help    - Display this help message showing available commands.
-    :so      - Sound OFF/ON - Recomended when not using sound, so things are fast.
+    :so      - Sound OFF/ON - Recommended when not using sound, so things are fast.
     :show    - Show the words currently in your learning pool.
-
-    """
+     """
     # :hint    - Show a hint for the current word (if hints are enabled).
     # :shint   - Show a hint on the first sighting of a word (if hints are enabled).
     print(help_text)
@@ -48,41 +45,40 @@ def print_words_in_pool(common_1000, session_words):
         if word_data:
             print(f"- {word_data.get('Czech', 'Unknown')} (English: {word_data.get('English', 'Unknown')})")
 
-
-
-
-
 def handle_commands(user_input, common_1000, progress, session_words, username):
-   
-    if user_input == ":q!":
-        print("\nQuitting game...")
-        exit()
+    if user_input.startswith(":"):  # Check if the input is a command
+        if user_input == ":q!":
+            print("\nQuitting game...")
+            exit()
 
-    elif user_input == ":su":
-        print("\nSwitching user...")
-        restart_script()
+        elif user_input == ":su":
+            print("\nSwitching user...")
+            restart_script()
 
-    elif user_input == ":lb":
-        display_scoreboard()
+        elif user_input == ":lb":
+            display_scoreboard()
 
-    elif user_input == ":new":
-        restart_script()
+        elif user_input == ":new":
+            restart_script()
 
-    elif user_input == ":help":
-        print_help()
+        elif user_input == ":help":
+            print_help()
 
-    elif user_input == ":so":
-        toggle_audio()
-        
-    elif user_input == ":show":
-        print_words_in_pool(common_1000, session_words)
+        elif user_input == ":so":
+            toggle_audio()
+            
+        elif user_input == ":show":
+            print_words_in_pool(common_1000, session_words)
 
-    elif user_input == ":hint":
-        print("\nShowing hint...")
-        # Add logic for showing hint
-        # needs hints added to xlsx
+        elif user_input == ":hint":
+            print("\nShowing hint...")
+            # Add logic for showing hint
+            # needs hints added to xlsx
 
-    elif user_input == ":shint":
-        print("\nShowing hint on first sighting...")
-        # Add logic for showing hint on first sighting
-        # needs hints added to xlsx
+        elif user_input == ":shint":
+            print("\nShowing hint on first sighting...")
+            # Add logic for showing hint on first sighting
+            # needs hints added to xlsx
+
+        return True  # Indicate that a command was executed
+    return False  # Indicate that no command was executed
