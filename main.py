@@ -90,6 +90,7 @@ def clear_temp_files():
             os.remove(temp_file)
         except PermissionError:
             print(f"Permission denied for {temp_file}. File might be in use.")
+            pygame.time.delay(100)  # Wait a bit before trying again
         except Exception as e:
             print(f"Error deleting {temp_file}: {e}")
 
@@ -187,15 +188,25 @@ def main():
         is_correct = guess == correct_answer.lower() or guess == eng_sentence_lower
 
         if is_correct:
+            print("____________________________________________________")
             print("\nCorrect, Correct, Correct, Correct, Correct")
+            # Print the mnemonic before resetting the word_id
+            print("\nMnemonic:", common_1000[word_id]['Mnemonic'])
+            # Update progress before resetting word_id
+            update_progress(progress, word_id, is_correct)
+            save_progress_to_json(username, progress)
+            # Then discard the word_id and reset
             session_words.discard(word_id)
-            word_id = None  # Reset word_id to select a new word in the next iteration
         else:
+            print("____________________________________________________")
             print("\nIncorrect, Incorrect, Incorrect, Incorrect, Incorrect")
+            # Print Mnemonic evern if incorrect 
+            print("\nMnemonic:", common_1000[word_id]['Mnemonic'])
+            # Update progress for incorrect guess before resetting word_id
+            update_progress(progress, word_id, is_correct)
+            save_progress_to_json(username, progress)
 
-        # Update progress based on the user's answer
-        update_progress(progress, word_id, is_correct)
-        save_progress_to_json(username, progress)
+
 
         print("____________________________________________________")
         print("\nMeaning: ", correct_answer)
