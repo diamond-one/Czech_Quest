@@ -12,6 +12,13 @@ from utilities.keepScore import update_score, save_progress_to_json, load_progre
 from utilities.command_handler import handle_commands, get_audio_status, print_help
 from utilities.title import print_title_art
 
+class Colors:
+    RED = '\033[91m'
+    GREEN = '\033[92m'
+    BLUE = '\033[94m'
+    RESET = '\033[0m'
+
+
 # Load data from Excel file
 def load_data_from_excel(file_path):
     df = pd.read_excel(file_path)
@@ -173,7 +180,7 @@ def main():
             eng_sentence_lower = eng_sentence_translation.strip().lower()
             correct_answer = common_1000[word_id]['English']
             print("\nWhat is:", czech_word, "in English?")
-            print("in a sentence: ", czech_sentence)
+            print("Used in a sentence: ", czech_sentence)
 
             if get_audio_status() == True:
                 temp_file = play_text(czech_word, czech_sentence)
@@ -189,7 +196,8 @@ def main():
 
         if is_correct:
             print("____________________________________________________")
-            print("\nCorrect, Correct, Correct, Correct, Correct")
+            print(f"\n{Colors.GREEN}                      CORRECT           {Colors.RESET}")
+            print("____________________________________________________")
             # Print the mnemonic before resetting the word_id
             print("\nMnemonic:", common_1000[word_id]['Mnemonic'])
             # Update progress before resetting word_id
@@ -199,21 +207,21 @@ def main():
             session_words.discard(word_id)
         else:
             print("____________________________________________________")
-            print("\nIncorrect, Incorrect, Incorrect, Incorrect, Incorrect")
+            print(f"\n{Colors.RED}                        INCORRECT           {Colors.RESET}")
+
+            print("____________________________________________________")
             # Print Mnemonic evern if incorrect 
             print("\nMnemonic:", common_1000[word_id]['Mnemonic'])
             # Update progress for incorrect guess before resetting word_id
             update_progress(progress, word_id, is_correct)
             save_progress_to_json(username, progress)
+            print("\nMeaning: ", correct_answer)
 
 
 
-        print("____________________________________________________")
-        print("\nMeaning: ", correct_answer)
-        print("\nMnemonic:", common_1000[word_id]['Mnemonic'])
-        print("____________________________________________________")        
+        # print("____________________________________________________")        
         print("\n", czech_sentence, ":", eng_sentence_translation)  # Display audio text
-        print("____________________________________________________")   
+        print(f"\n{Colors.RED} o_________________________o___________________________o{Colors.RESET}")   
 
         # Ask the user if they want to continue or enter a command
         user_input = input("Soak that in for a moment. Want more or enter a command: ").strip().lower()
