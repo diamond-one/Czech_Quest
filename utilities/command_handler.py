@@ -4,6 +4,7 @@ import sys
 import subprocess
 
 audio_enable = True
+replay_audio = True
 
 def restart_script():
     print("\nRestarting the game...")
@@ -23,6 +24,7 @@ def print_help():
     :help    - Display this help message showing available commands.
     :so      - Sound OFF/ON - Recommended when not using sound, so things are fast.
     :show    - Show the words currently in your learning pool.
+    :r       - Replay audio
      """
     # :hint    - Show a hint for the current word (if hints are enabled).
     # :shint   - Show a hint on the first sighting of a word (if hints are enabled).
@@ -79,6 +81,10 @@ def handle_commands(user_input, common_1000, progress, session_words, username):
             print("\nShowing hint on first sighting...")
             # Add logic for showing hint on first sighting
             # needs hints added to xlsx
+
+        elif user_input == ":r":
+            return replay_audio 
+
 
         return True  # Indicate that a command was executed
     return False  # Indicate that no command was executed
