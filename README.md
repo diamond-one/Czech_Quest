@@ -3,7 +3,9 @@
 
 Czech Quest is a terminal based, immersive language learning application designed to help users master 1000 common Czech words through an engaging, adaptive, and fun learning process. Utilizing the Leitner system and focused repetition, the app ensures effective vocabulary retention and learning.
 
-![image](https://github.com/diamond-one/Czech_Quest/assets/45215287/d5e9082b-5d55-45df-98d5-1e6e224e41f9)
+![image](https://github.com/diamond-one/Czech_Quest/assets/45215287/61281aba-ee25-4c8f-b578-37a586c57e2e)
+
+
 
 
 ## Features
