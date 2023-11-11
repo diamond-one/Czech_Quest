@@ -7,6 +7,7 @@ import tempfile
 import atexit
 import glob
 import pygame
+pygame.init()
 
 from utilities.keepScore import update_score, save_progress_to_json, load_progress_from_json, display_scoreboard
 from utilities.command_handler import handle_commands, get_audio_status, print_help
@@ -17,6 +18,18 @@ class Colors:
     GREEN = '\033[92m'
     BLUE = '\033[94m'
     RESET = '\033[0m'
+
+win = True
+def win_or_lose_audio(win):
+    if win:
+        # Create a Sound object for the win_audio.wav file
+        sound = pygame.mixer.Sound("content/win_audio.wav")
+        sound.play()
+    else:
+        # Create a Sound object for the lost_audio.wav file
+        sound = pygame.mixer.Sound("content/lost_audio.wav")
+        sound.play()
+
 
 
 # Load data from Excel file
@@ -195,9 +208,13 @@ def main():
         is_correct = guess == correct_answer.lower() or guess == eng_sentence_lower
 
         if is_correct:
+            #Playing win/lose audio
+            win = True 
+            win_or_lose_audio(win)
             print("____________________________________________________")
             print(f"\n{Colors.GREEN}                      CORRECT           {Colors.RESET}")
             print("____________________________________________________")
+            
             # Print the mnemonic before resetting the word_id
             print("\nMnemonic:", common_1000[word_id]['Mnemonic'])
             # Update progress before resetting word_id
@@ -206,9 +223,12 @@ def main():
             # Then discard the word_id and reset
             session_words.discard(word_id)
         else:
+            #Playing win/lose audio
+            win = False 
+            win_or_lose_audio(win)
             print("____________________________________________________")
             print(f"\n{Colors.RED}                        INCORRECT           {Colors.RESET}")
-
+            
             print("____________________________________________________")
             # Print Mnemonic evern if incorrect 
             print("\nMnemonic:", common_1000[word_id]['Mnemonic'])
@@ -220,8 +240,8 @@ def main():
 
 
         # print("____________________________________________________")        
-        print("\n", czech_sentence, ":", eng_sentence_translation)  # Display audio text
-        print(f"\n{Colors.RED} o_________________________o___________________________o{Colors.RESET}")   
+        print("\n",czech_sentence, ":", eng_sentence_translation)  # Display audio text
+        print(f"\n{Colors.BLUE} o_________________________o___________________________o{Colors.RESET}")   
 
         # Ask the user if they want to continue or enter a command
         user_input = input("Soak that in for a moment. Want more or enter a command: ").strip().lower()
