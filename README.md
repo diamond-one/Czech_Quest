@@ -5,7 +5,7 @@ Czech Quest is a terminal based, immersive language learning application designe
 
 ![image](https://github.com/diamond-one/Czech_Quest/assets/45215287/61281aba-ee25-4c8f-b578-37a586c57e2e)
 
-)
+
 
 
 ## Features
