@@ -27,3 +27,15 @@ def print_title_art():
 
     print(title)
 
+
+#Currently not printing correctly (not showing in terminal)
+
+# def print_flag_art():
+#     print(Colors.BLUE + ' '  + Colors.RESET + Colors.WHITE + ' ' * 70 + Colors.RESET)
+#     print(Colors.BLUE + ' ' * 2 + Colors.RESET + Colors.WHITE + ' ' * 69 + Colors.RESET)
+#     print(Colors.BLUE + ' ' * 2 + Colors.RESET + Colors.RED + ' ' * 69 + Colors.RESET)
+#     print(Colors.BLUE + ' ' + Colors.RESET + Colors.RED + ' ' * 70 + Colors.RESET)
+#     print_flag_art()
+
+# # To call the function and print the flag art
+

@@ -20,6 +20,8 @@ class Colors:
     WHITE = '\033[97m'
     RESET = '\033[0m'
 
+
+
 # Global variable to keep track of words answered correctly
 correctly_answered_words = set()
 
@@ -130,6 +132,7 @@ def play_text(czech_word, audio_text):
 
 def main():
     print_title_art()
+
     print_help()
     print("Czech Quest.. prepare yourself for 1000 word mastery!\n")
 
@@ -230,6 +233,7 @@ def main():
                 continue  # If a command was executed, repeat the loop without changing the word
 
         clear_temp_files()
+        
 
 if __name__ == "__main__":
     main()
