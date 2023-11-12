@@ -11,13 +11,14 @@ pygame.init()
 
 from utilities.keepScore import update_score, save_progress_to_json, load_progress_from_json, display_scoreboard
 from utilities.command_handler import handle_commands, get_audio_status, print_help
-from utilities.title import print_title_art
+from utilities.title import print_title_art, print_flag_art
 
 class Colors:
     RED = '\033[91m'
     GREEN = '\033[92m'
     BLUE = '\033[94m'
     WHITE = '\033[97m'
+    YELLOW = '\033[93m'
     RESET = '\033[0m'
 
 
@@ -132,7 +133,7 @@ def play_text(czech_word, audio_text):
 
 def main():
     print_title_art()
-
+    print_flag_art()
     print_help()
     print("Czech Quest.. prepare yourself for 1000 word mastery!\n")
 
@@ -194,7 +195,7 @@ def main():
             print("____________________________________________________")
 
             # Print the mnemonic before resetting the word_id
-            print("\nMnemonic:", common_1000[word_id]['Mnemonic'])
+            print(f"\n{Colors.YELLOW} Mnemonic:{Colors.RESET}", common_1000[word_id]['Mnemonic'])
             # Update progress before resetting word_id
             update_progress(progress, word_id, is_correct)
             save_progress_to_json(username, progress)
@@ -212,19 +213,18 @@ def main():
 
             print("____________________________________________________")
             # Print Mnemonic even if incorrect
-            print("\nMnemonic:", common_1000[word_id]['Mnemonic'])
+            print(f"\n{Colors.YELLOW} Mnemonic:{Colors.RESET}", common_1000[word_id]['Mnemonic'])
             # Update progress for incorrect guess before resetting word_id
             update_progress(progress, word_id, is_correct)
             save_progress_to_json(username, progress)
-            print("\nMeaning: ", correct_answer)
+            print(f"\n{Colors.GREEN} Meaning: {Colors.RESET}", correct_answer)
             word_id = None  # Reset word_id to select a new word in the next iteration
 
 
-        print("\n", czech_sentence, ":", eng_sentence_translation)  # Display audio text
-        print(f"\n{Colors.BLUE} o_________________________o___________________________o{Colors.RESET}")
-
+        print("\n",czech_sentence, ":", eng_sentence_translation)  # Display audio text
+        print_flag_art()
         # Ask the user if they want to continue or enter a command
-        user_input = input("Soak that in for a moment. Want more or enter a command: ").strip().lower()
+        user_input = input("<ENTER to continue>").strip().lower()
 
         # Check if the input is a command
         if user_input.startswith(':'):  # Assuming commands start with ':'
